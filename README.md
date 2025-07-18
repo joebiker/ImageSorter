@@ -1,9 +1,18 @@
 # ImageRename
 Rename photos from multiple sources based on Picture Taken
 
+Possible re-names of application 
+
+**agora** - easy, quick. 
+noun, (in ancient Greece) a public open space used for assemblies and markets.
+
+**allegory** - longer, but more fun
+noun, a story, poem, or picture that can be interpreted to reveal a hidden meaning, typically a moral or political one
+
 ## Build 
 
 ### Release build: 
 
 > dotnet build -c Release
+
 > dotnet build ImageSorter.csproj -c Release

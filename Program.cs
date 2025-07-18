@@ -4,6 +4,7 @@
 // C:\Users\JoePetsche\Downloads (laptop)
 // S:\Pictures\2025_07_06 El Dente and Wilson Peak
 
+using System.Reflection;
 using ImageSorter;
 
 public static class Program
@@ -21,6 +22,8 @@ public static class Program
         }
         else
         {
+            var version = Assembly.GetExecutingAssembly().GetName().Version;
+            Console.WriteLine($"Version: {version}");
             Console.WriteLine("Enter the folder path containing JPEG files (or press Enter for current directory):");
             string userInput = Console.ReadLine();
             if (!string.IsNullOrWhiteSpace(userInput))
@@ -83,7 +86,7 @@ public static class Program
         Console.WriteLine("Processing JPEG files...");
         foreach (string filePath in jpegFiles)
         {
-            var result = FileManipulation.ProcessJpegFile(filePath, suppressGoodFiles);
+            var result = FileJPEG.ProcessJpegFile(filePath, suppressGoodFiles);
             PrintFileProcessResult(result, suppressGoodFiles);
             allResults.Add(result);
         }
