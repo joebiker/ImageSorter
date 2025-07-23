@@ -6,7 +6,7 @@ namespace ImageSorter
 {
     public static class FileManipulation
     {
-        public static void OrderFiles(List<FileProcessResult> allResults, ReadmeFileHelper readme)
+        public static void OrderFiles(List<FileProcessResult> allResults, FileReadme readme)
         {
             // must contain more than 1 element
             if (allResults.Count < 2)
@@ -39,7 +39,7 @@ namespace ImageSorter
             }
         }
 
-        public static void FindAuthor(List<FileProcessResult> allResults, ReadmeFileHelper readme)
+        public static void FindAuthor(List<FileProcessResult> allResults, FileReadme readme)
         {
             foreach (var result in allResults)
             {

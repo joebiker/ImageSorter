@@ -2,16 +2,37 @@
     // Use IntelliSense to learn about possible attributes.
     // Hover to view descriptions of existing attributes.
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.0",
+    "version": "0.2.1",
     "configurations": [
         {
-            "name": ".NET Core Launch (console)",
+            "name": "Debug Console w/ Cursor (netcoredbg)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}\\bin\\Debug\\net8.0\\ImageSorter.dll",
+            //"args": ["C:\\Users\\JoePetsche\\Downloads", "audit"],
+            "args": ["C:\\temp"],
+            "cwd": "${workspaceFolder}",
+            "pipeTransport": {
+                "pipeCwd": "${workspaceFolder}",
+                "pipeProgram": "powershell",
+                "pipeArgs": ["-Command"],
+                "debuggerPath": "C:\\Windows\\System\\netcoredbg\\netcoredbg.exe",
+                "debuggerArgs": ["--interpreter=vscode"],
+                "quoteArgs": true
+            },
+            "env": {
+                "DOTNET_ENVIRONMENT": "Development"
+            }
+        },
+        {
+            "name": "Debug Console w/ Cursor (netcoredbg)",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/bin/Debug/net8.0/ImageSorter.dll",
-            "args": ["S:\\Pictures\\2025_07_06 El Dente and Wilson Peak"], //Laptop
-            //"args": ["C:\\Users\\JoePetsche\\Downloads"], //Laptop
+            //"args": ["S:\\Pictures\\2025_07_06 El Dente and Wilson Peak"], //Laptop
+            "args": ["C:\\Users\\JoePetsche\\Downloads"], //Laptop
             "cwd": "${workspaceFolder}",
             "console": "externalTerminal",
             "stopAtEntry": false
@@ -20,6 +41,6 @@
             "name": ".NET Core Attach",
             "type": "coreclr",
             "request": "attach"
-        }
+        },
     ]
 }

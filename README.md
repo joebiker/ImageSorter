@@ -16,3 +16,10 @@ noun, a story, poem, or picture that can be interpreted to reveal a hidden meani
 > dotnet build -c Release
 
 > dotnet build ImageSorter.csproj -c Release
+
+# TOOD
+
+Move prject into it's own subfolder.
+
+> dotnet add reference ../ImageSorter/ImageSorter.csproj
+

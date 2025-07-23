@@ -12,6 +12,8 @@ namespace ImageSorter
             result.FileName = Path.GetFileName(filePath);
             try
             {
+                FileInfo fileInfo = new FileInfo(filePath);
+                result.FileCreationTime = fileInfo.CreationTime;
                 using (var image = new Bitmap(filePath))
                 {
                     // Try to get the date taken from EXIF data
@@ -20,15 +22,10 @@ namespace ImageSorter
 
                     if (dateTaken.HasValue)
                     {
-
                         result.Status = "Exif";
                     }
                     else
                     {
-                        // Fall back to file creation/modification date
-                        FileInfo fileInfo = new FileInfo(filePath);
-
-                        result.FileCreationTime = fileInfo.CreationTime;
                         result.Status = "NoExif";
                     }
                 }

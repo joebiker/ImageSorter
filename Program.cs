@@ -6,6 +6,9 @@
 
 using System.Reflection;
 using ImageSorter;
+using System.IO;
+using System.Linq;
+using System.Globalization;
 
 public static class Program
 {
@@ -13,12 +16,16 @@ public static class Program
     {
         bool suppressGoodFiles = true;
         string folderPath = "."; // Default to current directory
+        bool audit = false;
 
-        // Bring in Foler requirement 
-        // TODO: default to current directory if not provided at command line
+        // Parse arguments
         if (args.Length > 0)
         {
             folderPath = args[0];
+            if (args.Any(a => a.Equals("audit", StringComparison.OrdinalIgnoreCase)))
+            {
+                audit = true;
+            }
         }
         else
         {
@@ -30,6 +37,13 @@ public static class Program
             {
                 folderPath = userInput;
             }
+            // Ask for audit if not provided in args
+            Console.WriteLine("Output audit CSV? (y/N):");
+            string auditInput = Console.ReadLine();
+            if (!string.IsNullOrWhiteSpace(auditInput) && auditInput.Trim().ToLower().StartsWith("y"))
+            {
+                audit = true;
+            }
         }
 
         // Validate folder path
@@ -39,14 +53,15 @@ public static class Program
             return;
         }
 
+        // TESTING
+        var readme = new FileReadme(folderPath);
+        readme.ReadReadme();
+        var filters = readme.GetEachFilter();
+        var name = readme.SearchFilterReturnName("IMG_1111.jpg");
+
         // Print the folder being scanned
         Console.WriteLine($"Scanning for JPEG files in: {Path.GetFullPath(folderPath)}");
         Console.WriteLine(new string('=', 80));
-
-        // TESTING
-        var readme = new ReadmeFileHelper(folderPath);
-        readme.ReadReadme();
-        var fileNames = readme.GetEachFileName();
 
         // Get all JPEG files from the specified folder
         string[] jpegFiles = Directory.GetFiles(folderPath, "*.*", SearchOption.TopDirectoryOnly)
@@ -121,12 +136,17 @@ public static class Program
         }
         
         Console.WriteLine(new string('=', 80));
+
+        // Output audit CSV if requested
+        if (audit)
+        {
+            FileCSV.WriteAuditCsv(allResults, "ImageFileAudit");
+        }
         //Console.WriteLine("Processing complete. Press any key to exit...");
         //Console.ReadKey();
         //Console.Read(); // For debug console when input isn't really possible. 
         // But the again, this line isn't needed in that case.
     }
-
 
     static void PrintFileProcessResult(FileProcessResult result, bool suppressGood = false)
     {
