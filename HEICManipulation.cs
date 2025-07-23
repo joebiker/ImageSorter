@@ -22,6 +22,10 @@ namespace ImageSorter
                 Status = "NoExif"
             };
 
+            // Always get file creation time
+            FileInfo fileInfo = new FileInfo(filePath);
+            result.FileCreationTime = fileInfo.CreationTime;
+
             try
             {
                 using (var metadata = new Metadata(filePath))
@@ -34,8 +38,6 @@ namespace ImageSorter
                         p.Value.Type == GroupDocs.Metadata.Common.MetadataPropertyType.DateTime)
                         .FirstOrDefault();
 
-                        // EXIF version 0232
-
                     if (dateProperty != null)
                     {
                         result.DateTaken = dateProperty.Value.ToStruct(DateTime.MinValue);
@@ -43,9 +45,6 @@ namespace ImageSorter
                     }
                     else
                     {
-                        // Fallback to file creation time
-                        FileInfo fileInfo = new FileInfo(filePath);
-                        result.FileCreationTime = fileInfo.CreationTime;
                         result.Status = "NoExif";
                     }
                 }
@@ -70,6 +69,11 @@ namespace ImageSorter
                 FileName = System.IO.Path.GetFileName(path),
                 Status = "NoExif"
             };
+
+            // Always get file creation time
+            var fileInfo = new System.IO.FileInfo(path);
+            result.FileCreationTime = fileInfo.CreationTime;
+
             try
             {
                 using (var image = new MagickImage(path))
@@ -78,9 +82,6 @@ namespace ImageSorter
                     if (exifProfile == null)
                     {
                         Console.WriteLine($"No EXIF profile found in file: {path}");
-                        // Fallback to file creation time
-                        var fileInfo = new System.IO.FileInfo(path);
-                        result.FileCreationTime = fileInfo.CreationTime;
                         result.Status = "NoExif";
                         return result;
                     }
@@ -88,9 +89,6 @@ namespace ImageSorter
                     if (dateTakenValue == null || string.IsNullOrWhiteSpace(dateTakenValue.Value))
                     {
                         Console.WriteLine($"No DateTimeOriginal tag found in file: {path}");
-                        // Fallback to file creation time
-                        var fileInfo = new System.IO.FileInfo(path);
-                        result.FileCreationTime = fileInfo.CreationTime;
                         result.Status = "NoExif";
                         return result;
                     }
@@ -104,9 +102,6 @@ namespace ImageSorter
                     else
                     {
                         Console.WriteLine($"Failed to parse DateTimeOriginal '{dateTakenString}' in file: {path}");
-                        // Fallback to file creation time
-                        var fileInfo = new System.IO.FileInfo(path);
-                        result.FileCreationTime = fileInfo.CreationTime;
                         result.Status = "NoExif";
                     }
                 }

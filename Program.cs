@@ -32,14 +32,14 @@ public static class Program
             var version = Assembly.GetExecutingAssembly().GetName().Version;
             Console.WriteLine($"Version: {version}");
             Console.WriteLine("Enter the folder path containing JPEG files (or press Enter for current directory):");
-            string userInput = Console.ReadLine();
+            string? userInput = Console.ReadLine();
             if (!string.IsNullOrWhiteSpace(userInput))
             {
                 folderPath = userInput;
             }
             // Ask for audit if not provided in args
             Console.WriteLine("Output audit CSV? (y/N):");
-            string auditInput = Console.ReadLine();
+            string? auditInput = Console.ReadLine();
             if (!string.IsNullOrWhiteSpace(auditInput) && auditInput.Trim().ToLower().StartsWith("y"))
             {
                 audit = true;
@@ -140,7 +140,7 @@ public static class Program
         // Output audit CSV if requested
         if (audit)
         {
-            FileCSV.WriteAuditCsv(allResults, "ImageFileAudit");
+            FileCSV.WriteAuditCsv(allResults, "_ImageFileAudit", folderPath);
         }
         //Console.WriteLine("Processing complete. Press any key to exit...");
         //Console.ReadKey();

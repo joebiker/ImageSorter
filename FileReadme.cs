@@ -32,7 +32,7 @@ namespace ImageSorter
 
         }
 
-        private string README_FILENAME = "README.txt";
+        private string README_FILENAME = "_README.txt";
         private string _directory;
         //private string _readme;
         //private string[] _lines;
@@ -57,7 +57,7 @@ namespace ImageSorter
             // Read the file line by line instead of splitting
             using (var reader = new StreamReader(readmePath))
             {
-                string line;
+                string? line;
                 while ((line = reader.ReadLine()) != null)
                 {
                     // Stop at first empty line (after trimming)

@@ -13,14 +13,16 @@ namespace ImageSorter
         /// </summary>
         /// <param name="allResults">The list of FileProcessResult objects to write to the CSV.</param>
         /// <param name="baseFileName">The base filename for the CSV output (e.g., 'Fileoutput'). Should be a filename only, no extension.</param>
-        public static void WriteAuditCsv(List<FileProcessResult> allResults, string baseFileName)
+        /// <param name="folderPath">The folder path where the CSV file will be saved.</param>
+        public static void WriteAuditCsv(List<FileProcessResult> allResults, string baseFileName, string folderPath)
         {
-            // Determine the filename
-            string fileName = baseFileName + ".csv";
+            // Determine the filename in the specified folder
+            string fileName = Path.Combine(folderPath, baseFileName + ".csv");
             int count = 1;
             while (File.Exists(fileName))
             {
-                fileName = $"{baseFileName}({count}).csv";
+                string numberedFileName = $"{baseFileName}({count}).csv";
+                fileName = Path.Combine(folderPath, numberedFileName);
                 count++;
             }
 
@@ -63,4 +65,4 @@ namespace ImageSorter
             return dt.HasValue ? dt.Value.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) : "";
         }
     }
-} 
+}

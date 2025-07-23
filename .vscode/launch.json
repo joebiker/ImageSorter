@@ -26,13 +26,13 @@
             }
         },
         {
-            "name": "Debug Console w/ Cursor (netcoredbg)",
+            "name": ".NET Core Launch (console)",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/bin/Debug/net8.0/ImageSorter.dll",
-            //"args": ["S:\\Pictures\\2025_07_06 El Dente and Wilson Peak"], //Laptop
-            "args": ["C:\\Users\\JoePetsche\\Downloads"], //Laptop
+            "args": ["S:\\Pictures\\2025_07_06 El Dente and Wilson Peak", "audit"], //Laptop
+            //"args": ["C:\\Users\\JoePetsche\\Downloads"], //Laptop
             "cwd": "${workspaceFolder}",
             "console": "externalTerminal",
             "stopAtEntry": false
