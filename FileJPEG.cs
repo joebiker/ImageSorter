@@ -1,6 +1,5 @@
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.Text;
+using System;
+using ImageMagick;
 
 namespace ImageSorter
 {
@@ -8,26 +7,26 @@ namespace ImageSorter
     {
         public static FileProcessResult ProcessJpegFile(string filePath, bool suppressPrintMessageOfGood = false)
         {
-            var result = new FileProcessResult();
-            result.FileName = Path.GetFileName(filePath);
+            var result = new FileProcessResult
+            {
+                FilePath = filePath,
+                FileName = System.IO.Path.GetFileName(filePath),
+                Status = "NoExif"
+            };
+
             try
             {
                 FileInfo fileInfo = new FileInfo(filePath);
-                result.FileCreationTime = fileInfo.CreationTime;
-                using (var image = new Bitmap(filePath))
-                {
-                    // Try to get the date taken from EXIF data
-                    DateTime? dateTaken = GetDateTaken(image);
-                    result.DateTaken = dateTaken;
+                result.FileCreated = fileInfo.CreationTime;
+                result.FileModified = fileInfo.LastWriteTime;
 
-                    if (dateTaken.HasValue)
-                    {
-                        result.Status = "Exif";
-                    }
-                    else
-                    {
-                        result.Status = "NoExif";
-                    }
+                // Try to get the date taken using MagickImage
+                DateTime? dateTaken = GetDateTakenWithMagick(filePath);
+                result.DateTaken = dateTaken;
+
+                if (dateTaken.HasValue)
+                {
+                    result.Status = "Exif";
                 }
             }
             catch (Exception ex)
@@ -38,51 +37,55 @@ namespace ImageSorter
             return result;
         }
 
-        static DateTime? GetDateTaken(Image image)
+        /// <summary>
+        /// Gets the DateTaken from EXIF data using MagickImage
+        /// </summary>
+        public static DateTime? GetDateTakenWithMagick(string filePath)
         {
             try
             {
-                // EXIF property ID for DateTimeOriginal (when photo was taken)
-                const int DateTimeOriginalPropertyId = 0x9003;
-
-                // Try DateTimeOriginal first (most accurate)
-                if (image.PropertyIdList.Contains(DateTimeOriginalPropertyId))
+                using (var image = new MagickImage(filePath))
                 {
-                    PropertyItem propItem = image.GetPropertyItem(DateTimeOriginalPropertyId);
-                    string dateString = Encoding.ASCII.GetString(propItem.Value).TrimEnd('\0');
-
-                    if (DateTime.TryParseExact(dateString, "yyyy:MM:dd HH:mm:ss",
-                        null, System.Globalization.DateTimeStyles.None, out DateTime result))
+                    var exifProfile = image.GetExifProfile();
+                    if (exifProfile == null)
                     {
-                        return result;
+                        return null;
                     }
-                }
 
-                // Fall back to DateTime (when image was last modified)
-                const int DateTimePropertyId = 0x0132;
-                if (image.PropertyIdList.Contains(DateTimePropertyId))
-                {
-                    PropertyItem propItem = image.GetPropertyItem(DateTimePropertyId);
-                    string dateString = Encoding.ASCII.GetString(propItem.Value).TrimEnd('\0');
-
-                    if (DateTime.TryParseExact(dateString, "yyyy:MM:dd HH:mm:ss",
-                        null, System.Globalization.DateTimeStyles.None, out DateTime result))
+                    // Try DateTimeOriginal first (when photo was taken)
+                    var dateTakenValue = exifProfile.GetValue(ExifTag.DateTimeOriginal);
+                    if (dateTakenValue != null && !string.IsNullOrWhiteSpace(dateTakenValue.Value))
                     {
-                        return result;
+                        string dateTakenString = dateTakenValue.Value;
+                        if (DateTime.TryParseExact(dateTakenString, "yyyy:MM:dd HH:mm:ss", null, 
+                            System.Globalization.DateTimeStyles.None, out DateTime dateTaken))
+                        {
+                            return dateTaken;
+                        }
                     }
-                }
 
-                // Fall back to DateTimeDigitized (when image was digitized)
-                const int DateTimeDigitizedPropertyId = 0x9004;
-                if (image.PropertyIdList.Contains(DateTimeDigitizedPropertyId))
-                {
-                    PropertyItem propItem = image.GetPropertyItem(DateTimeDigitizedPropertyId);
-                    string dateString = Encoding.ASCII.GetString(propItem.Value).TrimEnd('\0');
-
-                    if (DateTime.TryParseExact(dateString, "yyyy:MM:dd HH:mm:ss",
-                        null, System.Globalization.DateTimeStyles.None, out DateTime result))
+                    // Fall back to DateTime (when image was last modified)
+                    dateTakenValue = exifProfile.GetValue(ExifTag.DateTime);
+                    if (dateTakenValue != null && !string.IsNullOrWhiteSpace(dateTakenValue.Value))
                     {
-                        return result;
+                        string dateTakenString = dateTakenValue.Value;
+                        if (DateTime.TryParseExact(dateTakenString, "yyyy:MM:dd HH:mm:ss", null,
+                            System.Globalization.DateTimeStyles.None, out DateTime dateTaken))
+                        {
+                            return dateTaken;
+                        }
+                    }
+
+                    // Fall back to DateTimeDigitized (when image was digitized)
+                    dateTakenValue = exifProfile.GetValue(ExifTag.DateTimeDigitized);
+                    if (dateTakenValue != null && !string.IsNullOrWhiteSpace(dateTakenValue.Value))
+                    {
+                        string dateTakenString = dateTakenValue.Value;
+                        if (DateTime.TryParseExact(dateTakenString, "yyyy:MM:dd HH:mm:ss", null,
+                            System.Globalization.DateTimeStyles.None, out DateTime dateTaken))
+                        {
+                            return dateTaken;
+                        }
                     }
                 }
             }
@@ -94,6 +97,5 @@ namespace ImageSorter
 
             return null;
         }
-
     }
 }

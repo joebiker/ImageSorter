@@ -1,19 +1,17 @@
 using System.Text.RegularExpressions;
-using GroupDocs.Metadata;
 using ImageMagick;
 
 namespace ImageSorter
 {
-    public static class HEICManipulation
+    public static class FileHEIC
     {
-
         /// <summary>
         /// Extracts relevant metadata from a HEIC file and returns a FileProcessResult.
         /// JVP Note: Did not pick up every file Date Taken, unknown why.
         /// From: https://products.groupdocs.com/metadata/net/extract/heic/
         /// Limited to 15 files for evaluation. 
         /// </summary>
-        public static FileProcessResult GetMetaDataWithGroupDocs(string filePath)
+/*        public static FileProcessResult GetMetaDataWithGroupDocs(string filePath)
         {
             var result = new FileProcessResult
             {
@@ -24,7 +22,8 @@ namespace ImageSorter
 
             // Always get file creation time
             FileInfo fileInfo = new FileInfo(filePath);
-            result.FileCreationTime = fileInfo.CreationTime;
+            result.FileCreated = fileInfo.CreationTime;
+            result.FileModified = fileInfo.LastWriteTime;
 
             try
             {
@@ -56,7 +55,7 @@ namespace ImageSorter
             }
             return result;
         }
-
+*/
         /// <summary>
         /// Retrieves the 'Date Taken' (EXIF DateTimeOriginal) metadata using Magick.NET with error handling.
         /// Returns null if not found or on error.
@@ -70,12 +69,11 @@ namespace ImageSorter
                 Status = "NoExif"
             };
 
-            // Always get file creation time
-            var fileInfo = new System.IO.FileInfo(path);
-            result.FileCreationTime = fileInfo.CreationTime;
-
             try
             {
+                FileInfo fileInfo = new FileInfo(path);
+                result.FileCreated = fileInfo.CreationTime;
+                result.FileModified = fileInfo.LastWriteTime;
                 using (var image = new MagickImage(path))
                 {
                     var exifProfile = image.GetExifProfile();
@@ -114,4 +112,4 @@ namespace ImageSorter
             return result;
         }
     }
-}
+} 

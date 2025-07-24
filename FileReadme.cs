@@ -50,9 +50,15 @@ namespace ImageSorter
         /// <returns>True if the file exists and was read, false otherwise.</returns>
         public bool ReadReadme()
         {
+            // if file doesn't exist, remove the first char of the filename and try again
             string readmePath = Path.Combine(_directory, README_FILENAME);
             if (!File.Exists(readmePath))
-                return false;
+            {
+                // remove the first char of the filename and try again
+                readmePath = Path.Combine(_directory, README_FILENAME.Substring(1));
+                if (!File.Exists(readmePath))
+                    return false;
+            }
 
             // Read the file line by line instead of splitting
             using (var reader = new StreamReader(readmePath))
@@ -76,7 +82,7 @@ namespace ImageSorter
             return true;
         }
 
-        public string[] GetEachFilter()
+        public string[] GetFilters()
         {
             //var result = new List<string>();
             var result = new string[_rows.Count];
@@ -88,27 +94,6 @@ namespace ImageSorter
             }
             return result;
         }
-
-        /// <summary>
-        /// Finds the Name associated with the filter.
-        /// </summary>
-        /// <param name="item">The first column value to search for.</param>
-        /// <returns>The second column value if found, empty string otherwise.</returns>
-        public string FindSecondCsvValue(string item)
-        {
-            if (_rows == null)
-                return "";
-
-            foreach (var row in _rows)
-            {
-                if (row.Filter.StartsWith(item, StringComparison.OrdinalIgnoreCase))
-                {
-                    return row.Name;
-                }
-            }
-            return "";
-        }
-
     
         /// <summary>
         /// Extracts the prefix from the filter.

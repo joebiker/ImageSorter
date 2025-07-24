@@ -18,6 +18,10 @@ public static class Program
         string folderPath = "."; // Default to current directory
         bool audit = false;
 
+        // Print Version to console
+        var version = Assembly.GetExecutingAssembly().GetName().Version;
+        Console.WriteLine($"Version: {version}");
+
         // Parse arguments
         if (args.Length > 0)
         {
@@ -29,8 +33,6 @@ public static class Program
         }
         else
         {
-            var version = Assembly.GetExecutingAssembly().GetName().Version;
-            Console.WriteLine($"Version: {version}");
             Console.WriteLine("Enter the folder path containing JPEG files (or press Enter for current directory):");
             string? userInput = Console.ReadLine();
             if (!string.IsNullOrWhiteSpace(userInput))
@@ -53,120 +55,59 @@ public static class Program
             return;
         }
 
-        // TESTING
-        var readme = new FileReadme(folderPath);
-        readme.ReadReadme();
-        var filters = readme.GetEachFilter();
-        var name = readme.SearchFilterReturnName("IMG_1111.jpg");
-
         // Print the folder being scanned
-        Console.WriteLine($"Scanning for JPEG files in: {Path.GetFullPath(folderPath)}");
+        Console.WriteLine($"Scanning for image files in: {Path.GetFullPath(folderPath)}");
         Console.WriteLine(new string('=', 80));
 
-        // Get all JPEG files from the specified folder
-        string[] jpegFiles = Directory.GetFiles(folderPath, "*.*", SearchOption.TopDirectoryOnly)
-            .Where(
-                file => file.ToLower().EndsWith(".jpg") ||
-                file.ToLower().EndsWith(".jpeg")
-                )
-            .ToArray();
-
-        string[] heicFiles = Directory.GetFiles(folderPath, "*.*", SearchOption.TopDirectoryOnly)
-            .Where(
-                file => file.ToLower().EndsWith(".heic") // Added support for HEIC files
-                )
-            .ToArray();
-
-        string[] movFiles = Directory.GetFiles(folderPath, "*.*", SearchOption.TopDirectoryOnly)
-            .Where(
-                file => file.ToLower().EndsWith(".mov") // Added support for MOV files
-                )
-            .ToArray();
-
-        if (jpegFiles.Length == 0 && heicFiles.Length == 0 && movFiles.Length == 0)
-        {
-            Console.WriteLine("No files found in the specified directory.");
-            return;
-        }
-
-        // Process files
-        Console.WriteLine(
-            $"Found " +
-            $"{jpegFiles.Length} JPEG file(s), " +
-            $"{heicFiles.Length} HEIC file(s), " +
-            $"{movFiles.Length} MOV file(s).");
-        Console.WriteLine();
-
+        // the main show
         var allResults = new List<FileProcessResult>();
-        Console.WriteLine("Processing JPEG files...");
-        foreach (string filePath in jpegFiles)
-        {
-            var result = FileJPEG.ProcessJpegFile(filePath, suppressGoodFiles);
-            PrintFileProcessResult(result, suppressGoodFiles);
-            allResults.Add(result);
-        }
+        FileManipulation.FindFiles(folderPath, allResults, suppressGoodFiles);
 
-        Console.WriteLine("Processing HEIC files...");
-        foreach (string filePath in heicFiles)
-        {
-            //var result = HEICManipulation.GetMetaDataWithGroupDocs(filePath);
-            var result = HEICManipulation.GetDateTakenWithMagickNet(filePath);
-            PrintFileProcessResult(result, suppressGoodFiles);
-            allResults.Add(result);
-        }
+        // Update MOV dates from matching JPEGs
+        Console.WriteLine("Checking MOV files for matching JPEGs...");
+        FileMOV.UpdateMovDatesFromJpeg(allResults);
 
-        Console.WriteLine("Processing MOV files...");
-        foreach (string filePath in movFiles)
-        {
-            var result = MOVManipulation.ProcessMovFile(filePath);
-            PrintFileProcessResult(result, suppressGoodFiles);
-            allResults.Add(result);
-        }
+        // Find similar files
+        Console.WriteLine("Finding similar files releated to each image...");
+        FileManipulation.FindSimilarFiles(allResults, folderPath);
+        
+        // Maybe this goes into a class file?
+        var readme = new FileReadme(folderPath);
+        readme.ReadReadme();
+
+        // Find Author of each file
+        Console.WriteLine("Parsing README and finding Authors...");
+        FileManipulation.FindAuthors(allResults, readme);
 
         // Sort the results by BestDate
         Console.WriteLine("Sorting files...");
         FileManipulation.OrderFiles(allResults, readme);
 
+        // Rename files.
+        Console.WriteLine("Renaming files...");
+        FileManipulation.RenameFiles(allResults);
+
         Console.WriteLine(new string('=', 80));
+/*
+        // Print the results to screen (debugging purposes)
         Console.WriteLine("Sorted by BestDate:");
         Console.WriteLine();
         foreach (var result in allResults)
         {
             Console.WriteLine($"{result.FileName,-30} {result.FileNameMod,-30} {result.Author,-10} {result.BestDate:yyyy-MM-dd HH:mm:ss} {result.Status}");
         }
-        
         Console.WriteLine(new string('=', 80));
-
-        // Output audit CSV if requested
+*/
+        // Output audit CSV if requested at command line
         if (audit)
         {
             FileCSV.WriteAuditCsv(allResults, "_ImageFileAudit", folderPath);
         }
+        
         //Console.WriteLine("Processing complete. Press any key to exit...");
         //Console.ReadKey();
         //Console.Read(); // For debug console when input isn't really possible. 
         // But the again, this line isn't needed in that case.
-    }
-
-    static void PrintFileProcessResult(FileProcessResult result, bool suppressGood = false)
-    {
-        if (result.Status == "Error")
-        {
-            Console.WriteLine($"Error processing {result.FileName}: {result.ErrorMessage}");
-        }
-        else if (result.Status == "Exif")
-        {
-            if (!suppressGood)
-            {
-                Console.Write($"{result.FileName,-40} ");
-                Console.WriteLine($"Date Taken: {result.DateTaken:yyyy-MM-dd HH:mm:ss}");
-            }
-        }
-        else if (result.Status == "NoExif")
-        {
-            Console.Write($"{result.FileName,-40} ");
-            Console.WriteLine($"No EXIF date found. File created: {result.FileCreationTime:yyyy-MM-dd HH:mm:ss}");
-        }
     }
 
     // TODO: rename any jpeg and _.* files. could be MOV, could be txt or other.
