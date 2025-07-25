@@ -110,7 +110,7 @@ public static class Program
 
         // Sort the results by BestDate
         Console.WriteLine("Sorting files...");
-        FileManipulation.OrderFiles(allResults, readme);
+        FileManipulation.OrderFiles(allResults);
 
         // Preview the renames
         Console.WriteLine(new string('=', lineWidth));

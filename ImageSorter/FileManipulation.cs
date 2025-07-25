@@ -20,6 +20,12 @@ namespace ImageSorter
                     )
                 .ToArray();
 
+            string[] pngFiles = Directory.GetFiles(folderPath, "*.*", SearchOption.TopDirectoryOnly)
+                .Where(
+                    file => file.ToLower().EndsWith(".png")
+                    )
+                .ToArray();
+
             string[] heicFiles = Directory.GetFiles(folderPath, "*.*", SearchOption.TopDirectoryOnly)
                 .Where(
                     file => file.ToLower().EndsWith(".heic") // Added support for HEIC files
@@ -32,7 +38,7 @@ namespace ImageSorter
                     )
                 .ToArray();
 
-            if (jpegFiles.Length == 0 && heicFiles.Length == 0 && movFiles.Length == 0)
+            if (jpegFiles.Length == 0 && pngFiles.Length == 0 && heicFiles.Length == 0 && movFiles.Length == 0)
             {
                 Console.WriteLine("No files found in the specified directory.");
                 return;
@@ -42,6 +48,7 @@ namespace ImageSorter
             Console.WriteLine(
                 $"Found " +
                 $"{jpegFiles.Length} JPEG file(s), " +
+                $"{pngFiles.Length} PNG file(s), " +
                 $"{heicFiles.Length} HEIC file(s), " +
                 $"{movFiles.Length} MOV file(s).");
             Console.WriteLine();
@@ -50,6 +57,14 @@ namespace ImageSorter
             foreach (string filePath in jpegFiles)
             {
                 var result = FileJPEG.ProcessJpegFile(filePath, suppressGoodFiles);
+                PrintFileProcessResult(result, suppressGoodFiles);
+                allResults.Add(result);
+            }
+
+            Console.WriteLine("Processing PNG files...");
+            foreach (string filePath in pngFiles)
+            {
+                var result = FilePNG.ProcessPngFile(filePath, suppressGoodFiles);
                 PrintFileProcessResult(result, suppressGoodFiles);
                 allResults.Add(result);
             }
@@ -95,6 +110,7 @@ namespace ImageSorter
         
         /// <summary>
         /// Assigns authors to files based on patterns in the README file
+        /// If no readme is available, this will do nothing.
         /// </summary>
         public static void FindAuthors(List<FileProcessResult> files, FileReadme readme)
         {
@@ -129,7 +145,7 @@ namespace ImageSorter
         /// <summary>
         /// Orders files by their best available date
         /// </summary>
-        public static void OrderFiles(List<FileProcessResult> allResults, FileReadme readme)
+        public static void OrderFiles(List<FileProcessResult> allResults)
         {
             // must contain more than 1 element
             if (allResults.Count < 2)
@@ -170,6 +186,8 @@ namespace ImageSorter
                 {
                     i = lastPrefix; // Use the same prefix for files with same base name
                 }
+                // Always save to the ordered filename
+                result.FileNameOrdered = $"{i:D3}_{result.FileName}";
 
                 // if FileNameAuthor is set, use it, otherwise use the original filename
                 if (!string.IsNullOrWhiteSpace(result.FileNameAuthor))
@@ -180,7 +198,7 @@ namespace ImageSorter
                 else
                 {
                     // Set to FileNameOrdered because we don't have an author
-                    result.FileNameOrdered = $"{i:D3}_{result.FileName}";
+                    result.FileNameMod = $"{i:D3}_{result.FileName}";
                 }
                 lastResult = result;
             }
@@ -287,6 +305,15 @@ namespace ImageSorter
                     Console.WriteLine($"Error renaming {result.FileName}: {ex.Message}");
                 }
             }
+        }
+
+        /// <summary>
+        /// Undoes file renames on the filesystem.
+        /// </summary>
+        /// <param name="allResults">List of files to revert renames</param>
+        public static void UndoRenameFiles(List<FileProcessResult> allResults)
+        {
+            // Implementation goes here
         }
     }
 }
