@@ -5,6 +5,8 @@ namespace ImageSorter
         public string FilePath { get; set; }
         public string FileName { get; set; }
         public string FileNameMod { get; set; }
+        public string FileNameAuthor { get; set; }
+        public string FileNameOrdered { get; set; }
         public string Author { get; set; }
         public DateTime BestDate {
             // if DateTaken is available use that, 

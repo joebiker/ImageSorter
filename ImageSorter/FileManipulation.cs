@@ -111,6 +111,18 @@ namespace ImageSorter
 
                 string author = readme.SearchFilterReturnName(file.FileName);
                 file.Author = string.IsNullOrWhiteSpace(author) ? "" : author;
+
+                // Setup the FileNameAuthor
+                if (!string.IsNullOrWhiteSpace(file.Author))
+                {
+                    string fileNameWithoutExt = Path.GetFileNameWithoutExtension(file.FileName);
+                    string extension = Path.GetExtension(file.FileName);
+                    file.FileNameAuthor = $"{fileNameWithoutExt}_{file.Author}{extension}";
+                }
+                else {
+                    // Must write something for the Ordering function.
+                    file.FileNameAuthor = file.FileName;
+                }
             }
         }
 
@@ -159,8 +171,17 @@ namespace ImageSorter
                     i = lastPrefix; // Use the same prefix for files with same base name
                 }
 
-                // uses three digits in front of the filename
-                result.FileNameMod = $"{i:D3}_{result.FileName}";
+                // if FileNameAuthor is set, use it, otherwise use the original filename
+                if (!string.IsNullOrWhiteSpace(result.FileNameAuthor))
+                {
+                    // uses three digits in front of the filename
+                    result.FileNameMod = $"{i:D3}_{result.FileNameAuthor}";
+                }
+                else
+                {
+                    // Set to FileNameOrdered because we don't have an author
+                    result.FileNameOrdered = $"{i:D3}_{result.FileName}";
+                }
                 lastResult = result;
             }
         }

@@ -30,10 +30,10 @@ namespace ImageSorter
             using (var writer = new StreamWriter(fileName))
             {
                 // Write header
-                writer.WriteLine("FilePath,FileName,FileNameMod,Author,BestDate,DateTaken,FileCreated,FileModified,Status,ErrorMessage");
+                writer.WriteLine("FilePath,FileName,FileNameMod,FileNameAuthor,FileNameOrdered,Author,BestDate,DateTaken,FileCreated,FileModified,Status,ErrorMessage");
                 foreach (var result in allResults)
                 {
-                    writer.WriteLine($"{Escape(result.FilePath)},{Escape(result.FileName)},{Escape(result.FileNameMod)},{Escape(result.Author)},{result.BestDate.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)},{NullableDate(result.DateTaken)},{result.FileCreated.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)},{result.FileModified.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)},{Escape(result.Status)},{Escape(result.ErrorMessage)}");
+                    writer.WriteLine($"{Escape(result.FilePath)},{Escape(result.FileName)},{Escape(result.FileNameMod)},{Escape(result.FileNameAuthor)},{Escape(result.FileNameOrdered)},{Escape(result.Author)},{result.BestDate.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)},{NullableDate(result.DateTaken)},{result.FileCreated.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)},{result.FileModified.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)},{Escape(result.Status)},{Escape(result.ErrorMessage)}");
                 }
             }
             Console.WriteLine($"Audit CSV written to: {fileName}");

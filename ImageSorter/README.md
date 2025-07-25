@@ -23,3 +23,6 @@ Move prject into it's own subfolder.
 
 > dotnet add reference ../ImageSorter/ImageSorter.csproj
 
+add a "reset option" that will remove the prefix and author. Esentially reverting the changes. Maybe it can read the audit file to get the exact text. 
+
+Bug: did not properly order the .mov files in: S:\Pictures\2025_07_19 Uncompahgre Peak with Margs
