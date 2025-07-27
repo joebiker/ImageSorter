@@ -10,7 +10,7 @@ using System.Linq; // Added for .Where() and .Any()
 ///     - The second column is the name who took the series of photos.
 /// </summary>
 /// <param name="directory">The directory to read the README.txt file from.</param>
-namespace ImageSorter
+namespace Allegory
 {
     public class FileReadme
     {

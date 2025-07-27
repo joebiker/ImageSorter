@@ -4,7 +4,7 @@ using MetadataExtractor.Formats.QuickTime;
 using System.Collections.Generic; // Added for List
 using System.Linq; // Added for Where and FirstOrDefault
 
-namespace ImageSorter
+namespace Allegory
 {
     public static class FileMOV
     {
@@ -12,9 +12,9 @@ namespace ImageSorter
         /// Processes a MOV file and returns a FileProcessResult.
         /// This is a basic stub; you can add metadata extraction as needed.
         /// </summary>
-        public static FileProcessResult ProcessMovFile(string filePath)
+        public static POCOs.FileProcessResult ProcessMovFile(string filePath)
         {
-            var result = new FileProcessResult
+            var result = new POCOs.FileProcessResult
             {
                 FilePath = filePath,
                 FileName = System.IO.Path.GetFileName(filePath),
@@ -50,7 +50,7 @@ namespace ImageSorter
         /// For example, IMG_1234.MOV would look for IMG_1234.JPG or IMG_1234.JPEG
         /// </summary>
         /// <param name="files">List of FileProcessResult objects to process</param>
-        public static void UpdateMovDatesFromJpeg(List<FileProcessResult> files)
+        public static void UpdateMovDatesFromJpeg(List<POCOs.FileProcessResult> files)
         {
             // Get all MOV files
             var movFiles = files.Where(f => 

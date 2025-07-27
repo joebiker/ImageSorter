@@ -1,13 +1,13 @@
 using System;
 using ImageMagick;
 
-namespace ImageSorter
+namespace Allegory
 {
     public static class FilePNG
     {
-        public static FileProcessResult ProcessPngFile(string filePath, bool suppressPrintMessageOfGood = false)
+        public static POCOs.FileProcessResult ProcessPngFile(string filePath, bool suppressPrintMessageOfGood = false)
         {
-            var result = new FileProcessResult
+            var result = new POCOs.FileProcessResult
             {
                 FilePath = filePath,
                 FileName = System.IO.Path.GetFileName(filePath),

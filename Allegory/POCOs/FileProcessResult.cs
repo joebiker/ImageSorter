@@ -1,4 +1,4 @@
-namespace ImageSorter
+namespace Allegory.POCOs
 {
     public class FileProcessResult
     {
@@ -7,6 +7,7 @@ namespace ImageSorter
         public string FileNameMod { get; set; }
         public string FileNameAuthor { get; set; }
         public string FileNameOrdered { get; set; }
+        public string FileNameUndo { get; set; }
         public string Author { get; set; }
         public DateTime BestDate {
             // if DateTaken is available use that, 

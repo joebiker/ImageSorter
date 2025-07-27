@@ -2,15 +2,15 @@
     // Use IntelliSense to learn about possible attributes.
     // Hover to view descriptions of existing attributes.
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.1",
+    "version": "0.2.2",
     "configurations": [
         {
             "name": "Debug Console w/ Cursor (netcoredbg)",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}\\bin\\Debug\\net8.0\\ImageSorter.dll",
-            "args": ["C:\\temp", "-audit"],
+            "program": "${workspaceFolder}\\bin\\Debug\\net8.0\\Allegory.dll",
+            "args": ["C:\\temp", "-audit", "-undo"],
             "cwd": "${workspaceFolder}",
             "pipeTransport": {
                 "pipeCwd": "${workspaceFolder}",
@@ -29,8 +29,8 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/bin/Debug/net8.0/ImageSorter.dll",
-            "args": ["C:\\temp", "-audit"], //Laptop
+            "program": "${workspaceFolder}/bin/Debug/net8.0/Allegory.dll",
+            "args": ["C:\\temp", "-audit", "-undo"],
             "cwd": "${workspaceFolder}",
             "console": "externalTerminal",
             "stopAtEntry": false

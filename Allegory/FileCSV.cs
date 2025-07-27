@@ -3,7 +3,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Globalization;
 
-namespace ImageSorter
+namespace Allegory
 {
     public static class FileCSV
     {
@@ -14,7 +14,7 @@ namespace ImageSorter
         /// <param name="allResults">The list of FileProcessResult objects to write to the CSV.</param>
         /// <param name="baseFileName">The base filename for the CSV output (e.g., 'Fileoutput'). Should be a filename only, no extension.</param>
         /// <param name="folderPath">The folder path where the CSV file will be saved.</param>
-        public static void WriteAuditCsv(List<FileProcessResult> allResults, string baseFileName, string folderPath)
+        public static void WriteAuditCsv(List<POCOs.FileProcessResult> allResults, string baseFileName, string folderPath)
         {
             // Determine the filename in the specified folder
             string fileName = Path.Combine(folderPath, baseFileName + ".csv");

@@ -1,5 +1,5 @@
-# ImageRename
-Rename photos from multiple sources based on Picture Taken
+# Allegory
+Rename photos in chronological order. This will assist when photos come from multiple sources (authors). Will include the author name in the file rename.
 
 Possible re-names of application 
 
@@ -15,18 +15,8 @@ noun, a story, poem, or picture that can be interpreted to reveal a hidden meani
 
 > dotnet build -c Release
 
-> dotnet build ImageSorter.csproj -c Release
+> dotnet build Allegory.csproj -c Release
 
 # TOOD
-
-Move prject into it's own subfolder.
-
-> dotnet add reference ../ImageSorter/ImageSorter.csproj
-
-png files need to be tested.
-
-If Readme is not found, then don't process authors. 
-
-add a "reset option" that will remove the prefix and author. Esentially reverting the changes. Maybe it can read the audit file to get the exact text. 
 
 Bug: did not properly order the .mov files in: S:\Pictures\2025_07_19 Uncompahgre Peak with Margs
