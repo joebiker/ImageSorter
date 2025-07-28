@@ -20,3 +20,6 @@ noun, a story, poem, or picture that can be interpreted to reveal a hidden meani
 # TOOD
 
 Bug: did not properly order the .mov files in: S:\Pictures\2025_07_19 Uncompahgre Peak with Margs
+Seems to be 6 hours different (later). Check for UTC time? 
+
+Bug: undo did not properly rename the similar files (PSD).
