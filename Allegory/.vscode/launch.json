@@ -10,7 +10,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             "program": "${workspaceFolder}\\bin\\Debug\\net8.0\\Allegory.dll",
-            "args": ["C:\\temp", "-audit", "-undo"],
+            "args": ["C:\\temp", "-audit"],
             "cwd": "${workspaceFolder}",
             "pipeTransport": {
                 "pipeCwd": "${workspaceFolder}",

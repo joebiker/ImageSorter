@@ -24,7 +24,7 @@ namespace Allegory
             try
             {
                 FileInfo fileInfo = new FileInfo(filePath);
-                result.FileCreated = fileInfo.CreationTime; // not as good as quickTimeDir.GetDateTime(MetadataExtractor.Formats.QuickTime.QuickTimeMovieHeaderDirectory.TagCreated);
+                result.FileCreated = fileInfo.CreationTime; // generally not interesting
                 result.FileModified = fileInfo.LastWriteTime;
 
                 // Try to extract QuickTime creation date from MOV metadata
@@ -33,7 +33,21 @@ namespace Allegory
                 DateTime? creationDate = quickTimeDir.GetDateTime(MetadataExtractor.Formats.QuickTime.QuickTimeMovieHeaderDirectory.TagCreated);
                 if (creationDate != null)
                 {
-                    result.DateTaken = creationDate;
+                    // QuickTime dates should be UTC per specification, but many cameras store local time
+                    if (creationDate.Value.Kind == DateTimeKind.Utc)
+                    {
+                        result.DateTaken = creationDate.Value.ToLocalTime();
+                    }
+                    else if (creationDate.Value.Kind == DateTimeKind.Unspecified)
+                    {
+                        // This seems to work most of the time (ai didn't figure this out)
+                        result.DateTaken = creationDate.Value.ToLocalTime();
+                    }
+                    else
+                    {
+                        // If not marked as UTC, assume it's already local time (camera stored incorrectly)
+                        result.DateTaken = DateTime.SpecifyKind(creationDate.Value, DateTimeKind.Local);
+                    }
                     result.Status = "Exif";
                 }
             }
