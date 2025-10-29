@@ -19,8 +19,11 @@ namespace Allegory
         /// </summary>
         public class CsvRow
         {
+            // Image file filter (e.g., IMG_6955)
             public string Filter { get; set; }
+            // Name of the photographer
             public string Name { get; set; }
+            // Prefix extracted from the filter (e.g., 'IMG_')
             public string Prefix { get; set; }
 
             public CsvRow(string filter, string name, string prefix)
@@ -99,21 +102,30 @@ namespace Allegory
         /// Extracts the prefix from the filter.
         /// The prefix is the leading letters up to the first underscore.
         /// If no underscore is found, the prefix is the leading letters.
+        /// Enhanced to handle camera file patterns like DSC07898, IMG_6955, etc.
         /// </summary>
         /// <param name="filter">The filter to extract the prefix from.</param>
         public string FindPrefix(string filter)
         {
-            // Extract prefix up to first underscore
-            string? prefix = null;
+            // First try: Extract prefix up to first underscore (existing logic)
             int underscoreIdx = filter.IndexOf('_');
-            if (underscoreIdx > 0)
-                prefix = filter.Substring(0, underscoreIdx + 1); // include underscore
-            else {
-                // fallback: extract leading letters as the prefix
-                prefix = new string(filter.TakeWhile(char.IsLetter).ToArray());
+            if (underscoreIdx > 0 && underscoreIdx < 4)
+                return filter.Substring(0, underscoreIdx + 1); // include underscore
 
+            // Enhanced: For camera files without underscore, extract letters + first few digits
+            // This handles patterns like DSC07898, where DSC is the camera type
+            var letters = filter.TakeWhile(char.IsLetter).ToArray();
+            if (letters.Length > 0)
+            {
+                string letterPart = new string(letters);
+                
+                // For patterns like DSC07898, we want "DSC" as the prefix
+                // For patterns like IMG6955, we want "IMG" as the prefix
+                return letterPart;
             }
-            return prefix;
+
+            // Fallback: return first 3 characters if no clear pattern
+            return filter.Length >= 3 ? filter.Substring(0, 3) : filter;
         }
 
         /// <summary>
@@ -166,4 +178,4 @@ namespace Allegory
         }
 
     }
-} 
+}
