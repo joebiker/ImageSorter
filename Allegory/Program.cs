@@ -37,16 +37,19 @@ public static class Program
         {
             folderPath = args[0];
             fullPath = Path.GetFullPath(folderPath);
+
             if (args.Any(a => a.Equals("-audit", StringComparison.OrdinalIgnoreCase)))
             {
                 auditCsvOutput = true;
             }
+            
             // allow go or do or execute
             if (args.Any(a => a.Equals("-go", StringComparison.OrdinalIgnoreCase) || a.Equals("-do", StringComparison.OrdinalIgnoreCase) || a.Equals("-execute", StringComparison.OrdinalIgnoreCase)))
             {
                 undoRename = false;
                 executeRename = true;
             }
+            
             // -undo or -revert 
             if (args.Any(a => a.Equals("-undo", StringComparison.OrdinalIgnoreCase) || a.Equals("-revert", StringComparison.OrdinalIgnoreCase)))
             {
@@ -84,6 +87,22 @@ public static class Program
         if (!Directory.Exists(fullPath))
         {
             Console.WriteLine($"Error: Directory '{fullPath}' does not exist.");
+            return;
+        }
+
+        // check if _Readme.txt exists in the folder
+        if( !File.Exists(Path.Combine(fullPath, "_README.txt")))
+        {
+            Console.WriteLine("Notice: _README.txt not found in the specified directory, creating one...");
+            var cameraGroups = SortingHat.IdentifyAuthors(fullPath);
+            FileReadme.CreateReadmeFromCameraGroups(fullPath, cameraGroups);
+            Console.WriteLine("_README.txt created. Please review it's contents before proceeding.");
+            return;
+        }
+        // if -go -undo or -audit is not specified, exit
+        else if (!executeRename && !undoRename && !auditCsvOutput)
+        {
+            Console.WriteLine("_README.txt found in the specified directory, exiting.");
             return;
         }
 

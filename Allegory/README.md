@@ -11,16 +11,24 @@ noun, a story, poem, or picture that can be interpreted to reveal a hidden meani
 
 ## Usage
 
-Create a _Readme.txt file in the folder containing photos.
+no parameters
+Creates a _Readme.txt file in the folder containing photos.
+
 `-audit` 
-Create a CSV extracting dates and filename ordering output. Don't make filename changes.
+Creates a CSV extracting dates and filename ordering output. Don't make filename changes.
+
 `-go`
 Make filename changes.
+
 `-undo`
 Will restore file name to original. This removes the ordering number prefix and author postfix.
 
 
-### Testing
+## _Readme.txt
+
+This file is a configuration for authors of the photos along with various settings.
+
+## Testing
 
 1) Start with -audit to see if all the CSV data is included and correct.
 2) Make the renames with -go

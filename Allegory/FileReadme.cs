@@ -177,5 +177,58 @@ namespace Allegory
             return bestMatch.Row.Name;
         }
 
+        /// <summary>
+        /// Creates a new _README.txt file in the specified directory from camera groups.
+        /// The file contains one line per camera group in CSV format: FirstFileName,CameraName
+        /// </summary>
+        /// <param name="directory">The directory where the _README.txt file will be created</param>
+        /// <param name="cameraGroups">Array of camera groups to write to the file</param>
+        /// <returns>True if the file was created successfully, false otherwise</returns>
+        public static bool CreateReadmeFromCameraGroups(string directory, SortingHat.CameraGroup[] cameraGroups)
+        {
+            if (string.IsNullOrWhiteSpace(directory))
+            {
+                Console.WriteLine("Error: Directory path is null or empty.");
+                return false;
+            }
+
+            if (!Directory.Exists(directory))
+            {
+                Console.WriteLine($"Error: Directory does not exist: {directory}");
+                return false;
+            }
+
+            if (cameraGroups == null || cameraGroups.Length == 0)
+            {
+                Console.WriteLine("Warning: No camera groups provided. Empty _README.txt will be created.");
+            }
+
+            string readmePath = Path.Combine(directory, "_README.txt");
+
+            try
+            {
+                using (var writer = new StreamWriter(readmePath, false))
+                {
+                    if (cameraGroups != null)
+                    {
+                        foreach (var group in cameraGroups)
+                        {
+                            // Extract just the filename without extension for the filter
+                            string filterName = Path.GetFileNameWithoutExtension(group.FirstFileName);
+                            writer.WriteLine($"{filterName}, {group.CameraName}");
+                        }
+                    }
+                }
+
+                Console.WriteLine($"Successfully created _README.txt at: {readmePath}");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error creating _README.txt: {ex.Message}");
+                return false;
+            }
+        }
+
     }
 }
